@@ -1,0 +1,10 @@
+[package]
+name = "rust-wasm-audioworklet"
+version = "0.1.0"
+edition = "2021"
+license = "BSD-2-Clause"
+description = "Small example showcasing Rust running inside of an AudioWorklet."
+readme = "README.md"
+
+[lib]
+crate-type = ["cdylib"]
