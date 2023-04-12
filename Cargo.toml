@@ -8,3 +8,6 @@ readme = "README.md"
 
 [lib]
 crate-type = ["cdylib"]
+
+[dependencies]
+boingboingboing = { path = "../boingboingboing" }
