@@ -1,4 +1,4 @@
-class PhaseDistortionOscillator extends AudioWorkletProcessor {
+class IsoRhythms extends AudioWorkletProcessor {
     constructor(options) {
         super(options)
         const wasmBytes = options.processorOptions.wasmBytes;
@@ -21,7 +21,6 @@ class PhaseDistortionOscillator extends AudioWorkletProcessor {
 
     process(inputs, outputs, parameters) {
         const output = outputs[0];
-        //this.wasm.exports.pdosc_process(this.dsp, this.outptr, 128);
         this.wasm.exports.isorhythms_process(this.dsp, this.outptr, 128);
         this.wasm.exports.isorhythms_cvparams(this.dsp, this.cvptr, 6);
         for (let channel = 0; channel < output.length; ++channel) {
@@ -41,4 +40,4 @@ class PhaseDistortionOscillator extends AudioWorkletProcessor {
     }
 }
 
-registerProcessor('pdosc', PhaseDistortionOscillator);
+registerProcessor('isorhythms', IsoRhythms);

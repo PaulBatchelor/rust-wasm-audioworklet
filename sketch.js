@@ -25,8 +25,6 @@ function draw() {
     noStroke();
     if (IsoNode != null) {
         IsoNode.poll_cvparams();
-    } else {
-        console.log("hi");
     }
     for (let y = 0; y < 3; y++) {
         for (let x = 0; x < 2; x++) {
@@ -66,7 +64,7 @@ class IsoRhythmsNode extends AudioWorkletNode {
 window.addEventListener('load', async () => {
     let context = audioContext;
     try {
-        await context.audioWorklet.addModule('pdosc.js');
+        await context.audioWorklet.addModule('isorhythms.js');
     } catch(e) {
         throw new Error(`noise generator error: ${e.message}`);
     }
@@ -77,11 +75,11 @@ window.addEventListener('load', async () => {
     const options = {
         wasmBytes: wasmBuffer
     };
-    const PDOsc = new
-        IsoRhythmsNode(context, 'pdosc', {
+    const irnode = new
+        IsoRhythmsNode(context, 'isorhythms', {
         processorOptions: options
     });
 
-    PDOsc.connect(context.destination);
-    IsoNode = PDOsc;
+    irnode.connect(context.destination);
+    IsoNode = irnode;
 })
