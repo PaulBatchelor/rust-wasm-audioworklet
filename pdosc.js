@@ -11,12 +11,19 @@ class PhaseDistortionOscillator extends AudioWorkletProcessor {
         this.outbuf = new Float32Array(this.wasm.exports.memory.buffer,
                 this.outptr,
                 128);
+
+        this.cvptr = this.wasm.exports.alloc(6);
+        this.cv = new Float32Array(this.wasm.exports.memory.buffer,
+                this.cvptr,
+                6);
+        this.port.onmessage = (event) => this.onmessage(event.data);
     }
 
     process(inputs, outputs, parameters) {
         const output = outputs[0];
         //this.wasm.exports.pdosc_process(this.dsp, this.outptr, 128);
         this.wasm.exports.isorhythms_process(this.dsp, this.outptr, 128);
+        this.wasm.exports.isorhythms_cvparams(this.dsp, this.cvptr, 6);
         for (let channel = 0; channel < output.length; ++channel) {
             const outputChannel = output[channel];
             for (let i = 0; i < outputChannel.length; ++i) {
@@ -25,6 +32,12 @@ class PhaseDistortionOscillator extends AudioWorkletProcessor {
         }
 
         return true;
+    }
+
+    onmessage(event) {
+        if (event.type === "cv-get") {
+            this.port.postMessage({type: "cv-response", cv: this.cv});
+        }
     }
 }
 

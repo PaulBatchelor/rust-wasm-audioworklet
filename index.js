@@ -49,4 +49,3 @@ window.addEventListener('load', async () => {
       buttonStop.disabled = false;
   }, false);
 });
-

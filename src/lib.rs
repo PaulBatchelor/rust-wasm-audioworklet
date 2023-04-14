@@ -7,6 +7,7 @@ pub struct Voice {
     lpf: boing::butterworth::ButterworthLowPass,
     lfo: boing::magic_circle::MagicCircleSine,
     phs: f32,
+    lfoval: f32,
 }
 
 #[repr(C)]
@@ -22,6 +23,7 @@ impl Voice {
             lpf: boing::butlp(sr),
             lfo: boing::mcsine(sr),
             phs: 0.0,
+            lfoval: 0.0,
         }
     }
 
@@ -45,6 +47,7 @@ impl Voice {
     pub fn tick(&mut self) -> f32 {
         let smp = self.blsaw.saw();
         let s = (1.0 + self.lfo.tick()) * 0.5;
+        self.lfoval = s;
         self.lpf.set_freq(100.0 + 400.0 * s);
         let smp = self.lpf.tick(smp);
         return smp * 0.3 * s;
@@ -111,6 +114,18 @@ impl IsoRhythms {
 
         for n in 0..sz {
             outbuf[n] = self.tick();
+        }
+
+    }
+
+    pub fn cvparams(&mut self, outbuf: *mut f32, sz: usize) {
+
+        let outbuf: &mut [f32] = unsafe {
+            std::slice::from_raw_parts_mut(outbuf, sz)
+        };
+
+        for n in 0..6 {
+            outbuf[n] = self.voices[n].lfoval;
         }
 
     }
@@ -236,6 +251,12 @@ pub extern "C" fn isorhythms_setup(ir: &mut IsoRhythms) {
 #[no_mangle]
 pub extern "C" fn isorhythms_process(ir: &mut IsoRhythms, outbuf: *mut f32, sz: usize) {
     ir.process(outbuf, sz);
+}
+
+
+#[no_mangle]
+pub extern "C" fn isorhythms_cvparams(ir: &mut IsoRhythms, outbuf: *mut f32, sz: usize){
+    ir.cvparams(outbuf, sz);
 }
 
 #[no_mangle]
