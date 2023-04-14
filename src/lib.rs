@@ -12,6 +12,7 @@ pub struct Voice {
 #[repr(C)]
 pub struct IsoRhythms {
     voices: [Voice; 6],
+    bigverb: boing::bigverb::BigVerb,
 }
 
 impl Voice {
@@ -55,6 +56,7 @@ impl IsoRhythms {
     pub fn new(sr: usize) -> Self {
         IsoRhythms {
             voices: [Voice::new(sr); 6],
+            bigverb: boing::bigverb(sr),
         }
     }
 
@@ -71,7 +73,7 @@ impl IsoRhythms {
         voices[1].pitch(base + 11.0);
         voices[1].rate(1.0 / 9.0);
         voices[1].phase(0.1);
-        
+
         voices[2].init();
         voices[2].pitch(base + 7.0);
         voices[2].rate(1.0 / 7.0);
@@ -89,6 +91,8 @@ impl IsoRhythms {
         voices[5].init();
         voices[5].pitch(base + 4.0);
         voices[5].rate(1.0 / 4.0);
+
+        self.bigverb.init();
     }
 
     pub fn tick(&mut self) -> f32 {
@@ -96,7 +100,8 @@ impl IsoRhythms {
         for v in 0..6 {
             out += self.voices[v].tick();
         }
-        out
+        let (rvb, _) = self.bigverb.tick(out, out);
+        out + rvb * 0.2
     }
 
     pub fn process(&mut self, outbuf: *mut f32, sz: usize) {
