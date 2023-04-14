@@ -13,6 +13,13 @@ I couldn't resist spicing things up a bit by turning
 my sine tone into a [phase distortion oscillator](https://en.wikipedia.org/wiki/Phase_distortion_synthesis), modulated using an LFO generated using
 the [magic circle algorithm](https://ccrma.stanford.edu/~jos/pasp/Digital_Sinusoid_Generators.html). The resulting sound is a moderate improvement over a sinusoid.
 
+## Demo
+
+See: https://pbat.ch/isorhythms
+
+Note that the example is a more elaborate demo, found in the "isorhythms"
+branch of this repository.
+
 ## Building and Running
 
 First install the prerequisites.
